@@ -389,5 +389,5 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/venv,python,pycharm,django
-
-.env
+# If you want to publish your project uncomment this
+# .env

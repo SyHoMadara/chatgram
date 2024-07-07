@@ -13,6 +13,7 @@ from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -128,6 +129,12 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATIC_ROOT = BASE_DIR / 'static'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -144,10 +151,9 @@ REST_FRAMEWORK = {
     ],
 }
 
-
 # JWT settings
-PRIVATE_KEY_PATH = BASE_DIR / "private_key.pem"
-PUBLIC_KEY_PATH = BASE_DIR / "public_key.pem"
+PRIVATE_KEY_PATH = BASE_DIR / "config" / "keys" / "private_key.pem"
+PUBLIC_KEY_PATH = BASE_DIR / "config" / "keys" / "public_key.pem"
 
 with open(PRIVATE_KEY_PATH, "r") as private_file:
     PRIVATE_KEY_RSA = private_file.read()
