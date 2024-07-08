@@ -55,4 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if email := validated_data.get("email"):
             instance.set_email(email)
+        if password := validated_data.get("password"):
+            instance.set_password(password)
         return super().update(instance, validated_data)
