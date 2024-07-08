@@ -25,11 +25,34 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["email", "password", "first_name", "last_name", "is_staff", "is_active", "is_verified", "is_deleted",
-                  "created_at", "updated_at", "last_login"]
-        read_only_fields = ["is_staff", "is_active", "is_verified", "is_deleted", "created_at", "updated_at",
-                            "last_login"]
+        fields = [
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "is_active",
+            "is_verified",
+            "is_deleted",
+            "created_at",
+            "updated_at",
+            "last_login",
+        ]
+        read_only_fields = [
+            "is_staff",
+            "is_active",
+            "is_verified",
+            "is_deleted",
+            "created_at",
+            "updated_at",
+            "last_login",
+        ]
         extra_kwargs = {
             "email": {"required": True},
             "password": {"write_only": True},
         }
+
+    def update(self, instance, validated_data):
+        if email := validated_data.get("email"):
+            instance.set_email(email)
+        return super().update(instance, validated_data)
