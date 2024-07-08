@@ -60,5 +60,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.password = make_password(raw_password)
         self.save()
 
+    def set_email(self, email):
+        EmailValidator()(email)
+        email = self.normalize_username(email)
+        if self.email != email:
+            self.email = email
+            self.is_verified = False
+            self.save()
+
     def __str__(self):
         return self.email

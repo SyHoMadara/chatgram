@@ -30,7 +30,7 @@ class UsersTestCase(TestCase):
         new_name = "newtest"
 
         with self.subTest("Update email"):
-            self.user.email = new_email
+            self.user.set_email(new_email)
             self.user.save()
             self.assertEqual(self.user.email, new_email)
 
@@ -56,9 +56,8 @@ class UsersTestCase(TestCase):
 
     def test_change_email_integrity(self):
         User.objects.create_user("newuser@test.com", "testPassword1234")
-        self.user.email = "newuser@test.com"
         with self.assertRaises(IntegrityError):
-            self.user.save()
+            self.user.set_email("newuser@test.com")
 
     def test_soft_delete_user(self):
         self.user.delete()
