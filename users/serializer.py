@@ -27,7 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "email",
-            "password",
             "first_name",
             "last_name",
             "is_staff",
@@ -49,15 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             "email": {"required": True},
-            "password": {"write_only": True},
         }
-
-    def update(self, instance, validated_data):
-        if email := validated_data.get("email"):
-            instance.set_email(email)
-        if password := validated_data.get("password"):
-            instance.set_password(password)
-        return super().update(instance, validated_data)
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

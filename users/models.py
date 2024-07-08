@@ -1,8 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
-    AbstractBaseUser,
     BaseUserManager,
-    PermissionsMixin,
+    PermissionsMixin, AbstractBaseUser,
 )
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import EmailValidator
@@ -57,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def set_password(self, raw_password):
         validate_password(raw_password, self)
-        self.password = make_password(raw_password)
+        super().set_password(raw_password)
         self.save()
 
     def set_email(self, email):

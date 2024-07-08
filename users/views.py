@@ -63,6 +63,21 @@ class UserProfilesView(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"errors": e}, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        request_body={"password": "string"},
+        operation_description="Change user password",
+        responses={200: "Password successfully changed"},
+    )
+    @action(detail=False, methods=["post"], url_path="change-password", url_name="change-password")
+    def change_password(self, request):
+        user = request.user
+        try:
+            user.set_password(request.data.get("password"))
+            user.save()
+            return Response({"message": "Password successfully changed"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"errors": e}, status=status.HTTP_400_BAD_REQUEST)
+
 
 # get profile of other users with email
 class PublicUserProfileView(viewsets.ModelViewSet):
