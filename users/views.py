@@ -1,15 +1,15 @@
 from django.shortcuts import render
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
-from .serializer import RegisterUserSerializer, UserSerializer, PublicUserSerializer
+from .serializer import PublicUserSerializer, RegisterUserSerializer, UserSerializer
 
 
 class UserRegistrationView(APIView):
@@ -57,7 +57,10 @@ class UserProfilesView(viewsets.ModelViewSet):
         try:
             if serializer.is_valid():
                 serializer.save()
-                return Response({"message": "Profile successfully updated"}, status=status.HTTP_200_OK)
+                return Response(
+                    {"message": "Profile successfully updated"},
+                    status=status.HTTP_200_OK,
+                )
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -68,13 +71,20 @@ class UserProfilesView(viewsets.ModelViewSet):
         operation_description="Change user password",
         responses={200: "Password successfully changed"},
     )
-    @action(detail=False, methods=["post"], url_path="change-password", url_name="change-password")
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="change-password",
+        url_name="change-password",
+    )
     def change_password(self, request):
         user = request.user
         try:
             user.set_password(request.data.get("password"))
             user.save()
-            return Response({"message": "Password successfully changed"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Password successfully changed"}, status=status.HTTP_200_OK
+            )
         except Exception as e:
             return Response({"errors": e}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +107,9 @@ class PublicUserProfileView(viewsets.ModelViewSet):
             serializer = PublicUserSerializer(user)
             return Response(serializer.data)
         except User.DoesNotExist:
-            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"message": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class LogoutUserView(viewsets.ModelViewSet):
@@ -114,5 +126,6 @@ class LogoutUserView(viewsets.ModelViewSet):
         token = RefreshToken(request.data.get("refresh-token"))
         RefreshToken.for_user(request.user).blacklist()
         token.blacklist()
-        return Response({"message": "User successfully logged out"}, status=status.HTTP_200_OK)
-
+        return Response(
+            {"message": "User successfully logged out"}, status=status.HTTP_200_OK
+        )
