@@ -55,7 +55,14 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if email := validated_data.get("email"):
             instance.set_email(email)
-            print("HIHI")
         if password := validated_data.get("password"):
             instance.set_password(password)
         return super().update(instance, validated_data)
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email", "first_name", "last_name", "last_login"]
+        read_only_fields = fields
+
