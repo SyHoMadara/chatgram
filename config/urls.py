@@ -9,7 +9,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 base_url = [
     path("admin/", admin.site.urls),
-    path("api/v1/", include("users.urls")),
+    path("api/user/", include("users.urls")),
+    path("api/post/", include("posts.urls")),
 ]
 
 token_url = [

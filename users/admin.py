@@ -6,9 +6,9 @@ from users.models import User
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_staff',)}),
+        (None, {"fields": ("email", "password")}),
+        ("Personal info", {"fields": ("first_name", "last_name")}),
+        ("Permissions", {"fields": ("is_staff",)}),
         # ('Dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
@@ -21,9 +21,9 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
     # readonly_fields = ['date_joined', 'last_login']
-    list_display = ('email', 'first_name', 'last_name')
-    search_fields = ('email', 'first_name', 'last_name')
-    ordering = ('email',)
+    list_display = ("email", "first_name", "last_name")
+    search_fields = ("email", "first_name", "last_name")
+    ordering = ("email",)
     filter_horizontal = ()
 
 

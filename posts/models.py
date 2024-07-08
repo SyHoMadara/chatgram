@@ -5,9 +5,17 @@ from users.models import User
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver")
+    receiver = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="receiver"
+    )
     message = models.TextField()
-    reply = models.ForeignKey("self", on_delete=models.DO_NOTHING, related_name="replies", null=True, blank=True)
+    reply = models.ForeignKey(
+        "self",
+        on_delete=models.DO_NOTHING,
+        related_name="replies",
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
     is_deleted = models.BooleanField(default=False)

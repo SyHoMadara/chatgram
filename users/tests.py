@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
+
 from users.models import User
 
 
@@ -84,13 +85,13 @@ class UsersApiTestCase(TestCase):
             email="test@test.com",
             password="testPassword1234",
             first_name="test",
-            last_name="test"
+            last_name="test",
         )
         cls.user2 = User.objects.create_user(
             email="test2@test.com",
             password="testPassword1234",
             first_name="test2",
-            last_name="test2"
+            last_name="test2",
         )
 
     def test_user_registration(self):
@@ -99,38 +100,42 @@ class UsersApiTestCase(TestCase):
             "email": "newtest@test.com",
             "password": "newPassword1234",
             "first_name": "newtest",
-            "last_name": "newtest"
+            "last_name": "newtest",
         }
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(User.objects.count(), 3)
 
     def test_get_profile(self):
-        url = reverse("get-profile")
+        url = reverse("get_profile")
         access_token, _ = login(self)
         response = self.client.get(url, HTTP_AUTHORIZATION=f"Bearer {access_token}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["last_name"], "test")
 
     def test_get_public_profile(self):
-        url = reverse("get-public-profile")
+        url = reverse("get_public_profile")
         access_token, _ = login(self)
         data = {"email": "test2@test.com"}
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        response = self.client.post(
+            url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["last_name"], "test2")
 
     def test_change_profile(self):
-        url = reverse("change-profile")
+        url = reverse("change_profile")
         access_token, _ = login(self)
         data = {
             "email": "test3@test.com",
             "password": "testPassword12345",
             "first_name": "test3",
             "last_name": "test3",
-            "is_deleted": True
+            "is_deleted": True,
         }
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        response = self.client.post(
+            url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.count(), 2)
         updated_user = User.objects.get(email="test3@test.com")
@@ -141,20 +146,30 @@ class UsersApiTestCase(TestCase):
         self.assertFalse(updated_user.is_deleted)
 
     def test_change_password(self):
-        url = reverse("change-password")
+        url = reverse("change_password")
         access_token, _ = login(self)
         data = {"password": "newPassword12345"}
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        response = self.client.post(
+            url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(User.objects.get(email="test@test.com").check_password("newPassword12345"))
+        self.assertTrue(
+            User.objects.get(email="test@test.com").check_password("newPassword12345")
+        )
 
     def test_log_out(self):
         url = reverse("logout")
         access_token, refresh_token = login(self)
         data = {"refresh-token": str(refresh_token)}
-        response = self.client.post(url, data,HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        response = self.client.post(
+            url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
         self.assertEqual(response.status_code, 200)
 
         url = reverse("token_refresh")
-        response = self.client.post(url, {"refresh": str(refresh_token)},HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        response = self.client.post(
+            url,
+            {"refresh": str(refresh_token)},
+            HTTP_AUTHORIZATION=f"Bearer {access_token}",
+        )
         self.assertEqual(response.status_code, 401)

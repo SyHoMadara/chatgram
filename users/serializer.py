@@ -56,4 +56,3 @@ class PublicUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["email", "first_name", "last_name", "last_login"]
         read_only_fields = fields
-
