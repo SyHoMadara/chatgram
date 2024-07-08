@@ -65,7 +65,7 @@ class UsersTestCase(TestCase):
         self.assertTrue(self.user.is_deleted)
         try:
             User.objects.get(email="test@test.com")
-        except Exception as e:
+        except Exception:
             self.fail("User should not have been deleted")
         # Ensure the user can still be found when explicitly querying for deleted users
         deleted_user = User.objects.filter(is_deleted=True).first()
