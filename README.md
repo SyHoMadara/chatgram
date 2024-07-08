@@ -1,6 +1,6 @@
 # Chatgram
 
-## Table of conntent
+## Table of Contents
 - [Description](#description)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
@@ -11,47 +11,66 @@
   - [Authentication](#authentication)
   - [Messages](#messages)
   - [Users](#users)
-  
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Description
 
-This live chat application allows users to securely communicate in real-time. It leverages the RSA algorithm for secure
-login tokens and plans to implement message encryption for enhanced privacy.
+Chatgram is a live chat application that enables users to communicate securely in real-time. Utilizing the RSA algorithm for secure login tokens, it also plans to implement message encryption for enhanced privacy.
 
 ## Features
 
-- **Current Features**:
-    - Real-time messaging between users.
-    - Secure login with RSA algorithm tokens.
-- **Upcoming Features**:
-    - Sending files and pictures as messages.
-    - Editing and deleting messages.
-    - Viewing all messages and unread messages from other parties.
+### Current Features
+- **Real-time messaging** between users.
+- **Secure login** with RSA algorithm tokens.
+
+### Upcoming Features
+- Sending **files and pictures** as messages.
+- **Editing and deleting** messages.
+- Viewing **all messages and unread messages** from other parties.
 
 ## Technology Stack
 
-- Python
-- Django
-- Django REST Framework
-- RSA for encryption
+- **Python**
+- **Django**
+- **Django REST Framework**
+- **RSA** for encryption
 
 ## Security
 
-The application uses the RSA algorithm to generate secure login tokens. Future updates will include encryption for
-sending messages to ensure that all communications are private and secure.
+Chatgram uses the **RSA algorithm** to generate secure login tokens. Future updates will include **encryption for messages** to ensure that all communications are private and secure.
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/SyHoMadara/chatgram.git`
-2. Navigate to the project directory: `cd chatgram`
-3. Install dependencies: `pip install -r requirements.txt`
-4. make migrations: `python manage.py makemigrations`
-5. make migrate: `python manage.py migrate`
-6. create superuser: `python manage.py createsuperuser`
-7. Run the server: `python manage.py runserver`
-
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/SyHoMadara/chatgram.git
+   ```
+   
+2. Navigate to the project directory:
+   ```bash
+   cd chatgram
+   ````
+3. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. Make migrations:
+    ```bash
+    python manage.py makemigrations
+    ```
+5. Make migrate:
+    ```bash
+    python manage.py migrate
+    ```
+6. Create superuser:
+    ```bash
+    python manage.py createsuperuser
+    ```
+7. Run the server:
+    ```bash
+    python manage.py runserver
+    ```
 ## Usage
 
 After installation, visit `http://localhost:8000` to start using the application. Login with your credentials, and you
