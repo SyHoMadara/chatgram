@@ -8,14 +8,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Post
-from .serializer import PostCreatingSerializer
+from .serializer import PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
-    serializer_class = PostCreatingSerializer
+    serializer_class = PostSerializer
 
     @staticmethod
     def identify_receiver(post: Post, user):
@@ -23,7 +23,7 @@ class PostViewSet(viewsets.ModelViewSet):
             return post.author
         return post.receiver
 
-    @swagger_auto_schema(method="post", request_body=PostCreatingSerializer)
+    @swagger_auto_schema(method="post", request_body=PostSerializer)
     @action(
         detail=False, methods=["post"], url_name="send_message", url_path="send-message"
     )
@@ -51,53 +51,68 @@ class PostViewSet(viewsets.ModelViewSet):
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # # get all posts
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.queryset.filter(receiver=request.user)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return Response(serializer.data)
-    #
-    # # get a post by id
-    # def retrieve(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance)
-    #     return Response(serializer.data)
-    #
-    # # update a post by id
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data)
-    #
-    # # delete a post by id
-    # def destroy(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     instance.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-    #
-    # # send a message to user by id
-    # @swagger_auto_schema(method="post", request_body=PostCreatingSerializer)
-    # @action(detail=True, methods=["post"])
-    # def send_message(self, request, pk=None):
-    #     receiver = self.get_object()
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save(author=request.user, receiver=receiver)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #
-    # # edit a message by id
-    # @swagger_auto_schema(method="put", request_body=PostCreatingSerializer)
-    # @action(detail=True, methods=["put"])
-    # def edit_message(self, request, pk=None):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response(serializer.data)
-    #
-    # # delete a message by id
-    # @action(detail=True, methods=["delete"])
-    # def delete_message(self, request, pk=None):
-    #     instance = self
+    # get all posts
+    @swagger_auto_schema(
+        method="get",
+        responses={200: PostSerializer(many=True)},
+        request_body=list(PostSerializer),
+    )
+    @action(detail=False, methods=["get"], url_name="posts_list", url_path="posts-list")
+    def retrieve(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        if pk:
+            queryset = self.queryset.filter(
+                author=request.user, receiver=pk, is_deleted=False
+            )
+            return Response(
+                self.get_serializer(queryset, many=True).data, status=status.HTTP_200_OK
+            )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # Edit post by id
+    @swagger_auto_schema(method="post", request_body=PostSerializer)
+    @action(detail=False, methods=["post"], url_name="post_edit", url_path="edit-post")
+    def edit(self, request, *args, **kwargs):
+        message = request.data.get("message")
+        if message:
+            try:
+                post = self.queryset.get(id=kwargs.get("pk"))
+                if post.author == request.user:
+                    post.message = request.data.get("message")
+                    post.save()
+                    post = self.queryset.get(id=kwargs.get("pk"))
+                    return Response(
+                        PostSerializer(post).data, status=status.HTTP_200_OK
+                    )
+                return Response(
+                    {"error": "You can't edit this post"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            except Post.DoesNotExist:
+                return Response(
+                    {"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            return Response(
+                {"error": "Message is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    # delete a post by id
+    @swagger_auto_schema(method="delete", responses={204: "No Content"})
+    @action(
+        detail=False, methods=["delete"], url_name="post_delete", url_path="delete-post"
+    )
+    def delete(self, request, *args, **kwargs):
+        try:
+            post = self.queryset.get(id=kwargs.get("pk"))
+            if post.author == request.user:
+                post.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {"error": "You can't delete this post"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        except Post.DoesNotExist:
+            return Response(
+                {"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND
+            )

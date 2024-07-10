@@ -70,3 +70,26 @@ class PostApiTest(TestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=f"Bearer {access}")
 
         self.assertEqual(response.status_code, 201)
+
+    def test_post_list(self):
+        url = reverse("posts_list", kwargs={"pk": self.user2.id})
+        access_token, _ = login(self, self.user1.email, PASSWORD)
+        response = self.client.get(url, HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_post(self):
+        url = reverse("post_edit", kwargs={"pk": self.post.id})
+        access_token, _ = login(self, self.user1.email, PASSWORD)
+        data = {"message": "Edited message"}
+        response = self.client.post(
+            url, data, HTTP_AUTHORIZATION=f"Bearer {access_token}"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Post.objects.get(id=self.post.id).message, data["message"])
+
+    def test_delete_post(self):
+        url = reverse("post_delete", kwargs={"pk": self.post.id})
+        access_token, _ = login(self, self.user1.email, PASSWORD)
+        response = self.client.delete(url, HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(Post.objects.get(id=self.post.id).is_deleted)
