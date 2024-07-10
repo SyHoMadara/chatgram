@@ -7,7 +7,7 @@ from .models import Post
 
 
 # Serializer for sending message to user with email
-class PostCreatingSerializer(ModelSerializer):
+class PostSerializer(ModelSerializer):
     receiver = serializers.SlugRelatedField(
         slug_field="email", queryset=User.objects.all(), required=False
     )
