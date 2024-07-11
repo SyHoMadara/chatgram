@@ -6,29 +6,34 @@ from .views import (
     PublicUserProfileView,
     UserProfilesView,
     UserRegistrationView,
+    sign_up,
+    login,
 )
 
 router = DefaultRouter()
 
 urlpatterns = [
-    path("register/", UserRegistrationView.as_view(), name="register"),
+    path("api/register/", UserRegistrationView.as_view(), name="register"),
     path(
-        "profile/", UserProfilesView.as_view({"get": "get_profile"}), name="get_profile"
+        "api/profile/", UserProfilesView.as_view({"get": "get_profile"}), name="get_profile"
     ),
     path(
-        "change-profile/",
+        "api/change-profile/",
         UserProfilesView.as_view({"post": "update_profile"}),
         name="change_profile",
     ),
     path(
-        "change-password/",
+        "api/change-password/",
         UserProfilesView.as_view({"post": "change_password"}),
         name="change_password",
     ),
-    path("logout/", LogoutUserView.as_view({"post": "logout"}), name="logout"),
+    path("api/logout/", LogoutUserView.as_view({"post": "logout"}), name="logout"),
     path(
-        "user/",
+        "api/user/",
         PublicUserProfileView.as_view({"post": "get_profile"}),
         name="get_public_profile",
     ),
+    path("signup/", sign_up, name="sign_up"),
+    path("login/", login, name="login")
+
 ]

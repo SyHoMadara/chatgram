@@ -9,6 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
+from .forms import SignUpForm
 from .serializer import PublicUserSerializer, RegisterUserSerializer, UserSerializer
 
 
@@ -129,3 +130,20 @@ class LogoutUserView(viewsets.ModelViewSet):
         return Response(
             {"message": "User successfully logged out"}, status=status.HTTP_200_OK
         )
+
+
+def sign_up(request):
+    form = SignUpForm()
+    message = []
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            message.append("User successfully registered")
+        else:
+            message.append("User registration failed")
+    return render(request, "users/register.html", {"form": form})
+
+
+def login(request):
+    return render(request, "users/login.html")

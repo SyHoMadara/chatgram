@@ -55,7 +55,7 @@ class PostViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(
         method="get",
         responses={200: PostSerializer(many=True)},
-        request_body=list(PostSerializer),
+        request_body=PostSerializer,
     )
     @action(detail=False, methods=["get"], url_name="posts_list", url_path="posts-list")
     def retrieve(self, request, *args, **kwargs):
@@ -64,6 +64,9 @@ class PostViewSet(viewsets.ModelViewSet):
             queryset = self.queryset.filter(
                 author=request.user, receiver=pk, is_deleted=False
             )
+            for post in queryset:
+                post.seen = True
+                post.save()
             return Response(
                 self.get_serializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
